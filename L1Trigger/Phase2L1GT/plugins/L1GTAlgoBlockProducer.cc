@@ -41,8 +41,8 @@
 
 /** pathStatusExpression is borrowed from \class edm::PathStatusFilter by W. David Dagenhart */
 
-namespace qi = boost::spirit::qi;
-namespace ascii = boost::spirit::ascii;
+namespace qi = boost::spirit::qi;   // part of boost lib. Use parser expressions and define rules. eg qi::lit: matches a specific literal string.
+namespace ascii = boost::spirit::ascii; // similarly, ascii::space;  // Matches ' ', '\t', '\n', etc.
 
 namespace pathStatusExpression {
   class Evaluator {
@@ -54,7 +54,7 @@ namespace pathStatusExpression {
 
     virtual const char* pathName() const { return ""; }
 
-    virtual void setLeft(std::unique_ptr<Evaluator>&&) {}
+    virtual void setLeft(std::unique_ptr<Evaluator>&&) {} // rvalue reference, the function takes exclusive ownership of the pointer.
     virtual void setRight(std::unique_ptr<Evaluator>&&) {}
 
     virtual void print(std::ostream& out, unsigned int indentation) const {}
@@ -64,7 +64,9 @@ namespace pathStatusExpression {
 
   class Operand : public Evaluator {
   public:
-    Operand(std::vector<char> const& pathName) : pathName_(pathName.begin(), pathName.end()) {}
+    Operand(std::vector<char> const& pathName) : pathName_(pathName.begin(), pathName.end()) {} // constructor Operand,takes a const reference to a std::vector<char>
+                                                                                                // The constructor copies the elements from the input pathName vector 
+                                                                                                // into the pathName_ member using the iterator range.
 
     EvaluatorType type() const override { return Name; }
 
@@ -85,7 +87,7 @@ namespace pathStatusExpression {
   public:
     EvaluatorType type() const override { return Not; }
 
-    void setLeft(std::unique_ptr<Evaluator>&& v) override { operand_ = std::move(v); }
+    void setLeft(std::unique_ptr<Evaluator>&& v) override { operand_ = std::move(v); } // move() takes ownership of the std::unique_ptr<Evaluator> passed as an argument (v) and assign it to the member variable operand_ 
 
     void print(std::ostream& out, unsigned int indentation) const override {
       out << std::string(indentation, ' ') << "not\n";
