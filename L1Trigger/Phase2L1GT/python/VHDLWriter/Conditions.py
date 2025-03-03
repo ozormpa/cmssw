@@ -102,20 +102,20 @@ class Condition:
         and physics (physcut) values.
         """
         needs_conversion = key in self._HWConversionFunctions
-        print(f"🚀 Key in setcut is: {key} - needs conversion? {needs_conversion}")
+        # print(f"🚀 Key in setcut is: {key} - needs conversion? {needs_conversion}")
         if isinstance(physvalue, list):
-            print(f"\t\tWe are in a list {physvalue}")
+            # print(f"\t\tWe are in a list {physvalue}")
             if needs_conversion:
                 hwvalue = [self._HWConversionFunctions[key](v) for v in physvalue]
-                print(f"\t\t\tNeeds conversion: hwvalue: {hwvalue}")
+                # print(f"\t\t\tNeeds conversion: hwvalue: {hwvalue}")
             else:
                 hwvalue = physvalue  # No conversion needed
-                print(f"\t\t\tDoesn't need conversion: hwvalue: {hwvalue} = {physvalue}")
+                # print(f"\t\t\tDoesn't need conversion: hwvalue: {hwvalue} = {physvalue}")
         else:
             hwvalue = self._HWConversionFunctions[key](physvalue) if needs_conversion else physvalue
-            print(f"\t\tWe are not in a list - needs conversion? {needs_conversion} - hw: {hwvalue} phys: {physvalue}")
+            # print(f"\t\tWe are not in a list - needs conversion? {needs_conversion} - hw: {hwvalue} phys: {physvalue}")
         if collection != "":
-            print(f"\t\tWe are in a collection!")
+            # print(f"\t\tWe are in a collection!")
             if self.getHWCut(key) not in self.Cuts.keys():
                 cut = _Cut()
                 cut.setNumberofvalues(numberofparameters, physvalue, hwvalue)  
@@ -123,21 +123,21 @@ class Condition:
                     cut.setforBooleanCut(numberofparameters)
                 cut.setCutat(hwvalue, physvalue, collection)
                 self.Cuts[self.getHWCut(key)] = cut
-                print(f"\t\t\tWe are not in self.Cuts.keys - cut: {self.getHWCut(key)}")
+                # print(f"\t\t\tWe are not in self.Cuts.keys - cut: {self.getHWCut(key)}")
             else:
                 self.Cuts[self.getHWCut(key)].setCutat(hwvalue, physvalue, collection)
-                print(f"\t\t\tWe are in self.Cuts.keys - cut: {self.getHWCut(key)}")
+                # print(f"\t\t\tWe are in self.Cuts.keys - cut: {self.getHWCut(key)}")
         else:
-            print(f"\t\tWe are not in a collection!")
+            # print(f"\t\tWe are not in a collection!")
             cut = _Cut()
             cut.setNumberofvalues(numberofparameters, physvalue, hwvalue) 
             cut.setCut(hwvalue, physvalue)
             self.Cuts[self.getHWCut(key)] = cut
-            print(f"\t\t\tcut: {self.getHWCut(key)}")
-        print("\t\t\tAll cuts are  : ")
-        for cut in self.Cuts:
-            print(f"\t\t\t\t\t{cut}")
-        print(f"😊😊 {key} {hwvalue} {physvalue}")
+            # print(f"\t\t\tcut: {self.getHWCut(key)}")
+        # print("\t\t\tAll cuts are  : ")
+        # for cut in self.Cuts:
+            # print(f"\t\t\t\t\t{cut}")
+        # print(f"😊😊 {key} {hwvalue} {physvalue}")
 
     def setName(self,name):
         self.Name = name
@@ -255,7 +255,7 @@ class DoubleObjCond(Condition):
         collections = {1: object.getParameter('collection1'), 2: object.getParameter('collection2')}
         for col in collections.values():
             self._InputTags += [col.getParameter("tag")]
-            print(f"🔹🔹 DoubleObjCond: {self._InputTags}")
+            # print(f"🔹🔹 DoubleObjCond: {self._InputTags}")
         return collections
 
 class SingleObjCond(Condition):
@@ -305,7 +305,7 @@ class SingleObjCond(Condition):
 
     def getCollections(self, object):
         self._InputTags += [object.getParameter("tag")]
-        print(f"🔹 SingleObjCond: {self._InputTags}")
+        # print(f"🔹 SingleObjCond: {self._InputTags}")
         return {}
 
 class QuadObjCond(Condition):
@@ -394,7 +394,7 @@ class QuadObjCond(Condition):
         collections = {1: object.getParameter('collection1'), 2: object.getParameter('collection2'),3: object.getParameter('collection3'),4: object.getParameter('collection4')}
         for col in collections.values():
             self._InputTags += [col.getParameter("tag")]
-            print(f"🔹🔹🔹🔹 QuadObjCond: {self._InputTags}")
+            # print(f"🔹🔹🔹🔹 QuadObjCond: {self._InputTags}")
         return collections
 
 
@@ -502,7 +502,7 @@ class TripleObjCond(Condition):
         collections = {1: object.getParameter('collection1'), 2: object.getParameter('collection2'),3: object.getParameter('collection3')}
         for col in collections.values():
             self._InputTags += [col.getParameter("tag")]
-            print(f"🔹🔹🔹 TripleObjCond: {self._InputTags}")
+            # print(f"🔹🔹🔹 TripleObjCond: {self._InputTags}")
         return collections
     
     def getCorrelations(self, object):
@@ -571,19 +571,14 @@ class _Cut:
         # Initialize default values based on input type
         def get_default(v, mode):
             if isinstance(v, bool):
-                print(f"\t\t🔥🔥 value {v} is {type(v)} == bool")
                 return False
             elif isinstance(v, float):
-                print(f"\t\t🔥🔥 value {v} is {type(v)} == float")
                 return 0.0
             elif isinstance(v, list) and mode == "hw":
-                print(f"\t\t🔥🔥 value {v} is {type(v)} == list")
                 return '(others => 0)' if v else []
             elif isinstance(v, list) and mode == "phys":
-                print(f"\t\t🔥🔥 value {v} is {type(v)} == list")
                 return [get_default(v[0], "phys")] * len(v) if v else []
             else:
-                print(f"\t\t🔥🔥 value {v} is {type(v)} == other")
                 return 0  # Default to int
         self.hwcut = [get_default(hwvalue, "hw")] * numparam
         self.physcut = [get_default(physvalue, "phys")] * numparam
@@ -658,7 +653,6 @@ class Algorithmsdict:
             for algoblock in self.algoblocks:
                 # if algoblock.checklogical(key, value):
                 if algoblock.checklogical(value):
-                    # print("here here!")
                     break
             else:
                 newblock  = AlgorithmBlock()

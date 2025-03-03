@@ -41,7 +41,7 @@ def checkFilter(filt):
         if filt.hasParameter(knowncut):
             Condit.setCut(knowncut, filt.getParameter(knowncut).value())
             Condit.addResources(knowncut)
-            print(f"✅✅ Knowncut: {knowncut} {Condit.setCut(knowncut, filt.getParameter(knowncut).value())}")
+            # print(f"✅✅ Knowncut: {knowncut} {Condit.setCut(knowncut, filt.getParameter(knowncut).value())}")
     for idx, tag in enumerate(Condit._InputTags):
         Condit._setInputObject(idx + 1, tag.productInstanceLabel)
     return Condit
@@ -62,7 +62,7 @@ def assignAlgoBits(obj):
 def getConditionsfromConfig(obj):
     filterdict = {}
     for key,value in obj.filters.items():
-        print(f"🎯 Key: {key} - Value {value}")
+        # print(f"🎯 Key: {key} - Value {value}")
         x = checkFilter(value)
         if x != 0:
             filterdict[key] = x 
@@ -122,9 +122,7 @@ def sortAlgodictWithIndices(menu):
     sorted_items = sorted(algo_dict.items(), key=lambda item: item[0])
     # Create a new dictionary with index-based sorting while keeping expressions
     sorted_algo_dict = {idx: {"name": name, "expression": expr} for idx, (name, expr) in enumerate(sorted_items)}
-    print("Sorted Algorithm Dictionary:")
-    for key, value in sorted_algo_dict.items():
-        print(f"{key}: Name: {value['name']}, Expression: {value['expression']}")
+    # print("Sorted Algorithm Dictionary:")
     return sorted_algo_dict
 
 
@@ -241,7 +239,7 @@ def distributeAlgosWithoutopt(algodict,numslrs):
         return algounits
     else:
         addalgo = algodict.algoblocks.pop()
-        print(type(addalgo))
+        # print(type(addalgo))
         if(addalgo == type(int)):
             return addalgo
         cnt = 0
@@ -293,7 +291,7 @@ def assignAlgostoSlrs(knownfilters,logicalcombinations,numslrs):
 
 def writeAlgounits(distributedAlgos,algomap,knownfilters,logcomb):
     for index,value in enumerate(distributedAlgos):
-        print(f"Writealgo: {index} with {type(index)} and {value.LogicalPath} -- {dir(value)}")
+        # print(f"Writealgo: {index} with {type(index)} and {value.LogicalPath} -- {dir(value)}")
         modules = dict()
         paths = dict()
         condtext = ""
@@ -302,7 +300,7 @@ def writeAlgounits(distributedAlgos,algomap,knownfilters,logcomb):
         tdistributedAlgos = {}
         logicalcombinations = dict()
         for mod in value.Modules:
-            print(f"Mod is: {mod} with type: {type(mod)}")
+            # print(f"Mod is: {mod} with type: {type(mod)}")
             condtext += writer.conditionwriter(mod,knownfilters[mod])
             tdistributedAlgos[mod] = knownfilters[mod]
         if(value.LogicalPath != set()):
